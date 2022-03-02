@@ -1,12 +1,8 @@
+from rest_framework import viewsets,status
+from rest_framework.response import Response
 from company.serializers import CompanySerializer
 from super_admin.models import User
 from company.models import Company
-from rest_framework import viewsets,status
-from rest_framework.response import Response
-# from django.db import transaction
-# import logging
-from swagger.documentation import swagger_wrapper
-from drf_yasg import openapi
 
 
 class CompanyAPI(viewsets.ViewSet):
@@ -14,14 +10,6 @@ class CompanyAPI(viewsets.ViewSet):
     serializer_class = CompanySerializer
     http_method_names = ["post", "get", "put", "delete", "head", "options"]
 
-    @swagger_wrapper({
-        "company_email" : openapi.TYPE_STRING,
-        "company_name" : openapi.TYPE_STRING,
-        "company_phonenumber" : openapi.TYPE_STRING,
-        "password" : openapi.TYPE_STRING,
-        "company_address" : openapi.TYPE_STRING,
-        "company_website" : openapi.TYPE_STRING,
-    })
     def create(self, request, *args, **kwargs):
         try:
             try:
@@ -55,8 +43,6 @@ class CompanyAPI(viewsets.ViewSet):
                 status=status.HTTP_201_CREATED
             )
         except Exception as err:
-            # print("error : ",err)
-            # logging.error(f"CompanyAPI create: {err}", exc_info=True)
             return Response(err, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def list(self, request, *args, **kwargs):
@@ -67,16 +53,8 @@ class CompanyAPI(viewsets.ViewSet):
                 status=status.HTTP_200_OK,
             )
         except Exception as err:
-            # logging.error(f"FormApi list: {err}", exc_info=True)
             return Response(err, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    @swagger_wrapper({
-        "company_email" : openapi.TYPE_STRING,
-        "company_name" : openapi.TYPE_STRING,
-        "company_phonenumber" : openapi.TYPE_STRING,
-        "company_address" : openapi.TYPE_STRING,
-        "company_website" : openapi.TYPE_STRING,
-    })
     def update(self, request, *args, **kwargs):
         try:
             company = Company.objects.get(id=kwargs["pk"])
@@ -86,7 +64,6 @@ class CompanyAPI(viewsets.ViewSet):
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as err:
-            # logging.error(f"CompanyAPI update: {err}", exc_info=True)
             return Response(err, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     #We are doing soft delete to ensure the company details are with us for future promotional purpose
@@ -97,6 +74,5 @@ class CompanyAPI(viewsets.ViewSet):
             company.save()
             return Response(status=status.HTTP_200_OK)
         except Exception as err:
-            # logging.error(f"CompanyAPI delete: {err}", exc_info=True)
             return Response(err, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
